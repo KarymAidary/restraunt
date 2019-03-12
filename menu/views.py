@@ -4,6 +4,7 @@ from .models import Dish, Basket, BasketItem
 from .forms import DishForm
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 
 
 class DishUpdateView(UpdateView):
@@ -50,7 +51,7 @@ def remove_from_basket(request):
         return_dict['dishes_total'] = basket.dishes.count()
         if basket.dishes.count() < 1 or basket.total <= 3.50:
             basket.delete()
-            # return_dict['empty_basket'] = render_to_string('core/empty_basket.html')
+            return_dict['empty_basket'] = render_to_string('core/empty_basket.html')
         else:
             basket.count_total_price()
         return_dict['basket_total'] = basket.total

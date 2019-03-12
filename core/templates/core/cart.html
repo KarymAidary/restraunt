@@ -156,47 +156,53 @@
         .pb-100 {
             padding-bottom: 100px;
         }
+        .empty-basket {
+            display: none;
+        }
     </style>
-    {% if object_list %}
-    <h1 class="page-title">Оформить заказ</h1>
-    <div class="table-info">
-            <div class="name-info">Название (краткое описание)</div>    
-            <div class="amount-info">Количество</div>
-            <div class="price-info">Стоимость</div>
-            <div class="empty-info"></div>
-    </div>
-    <hr class="hr">        
-    {% for items in object_list %}
-        <div class="cart-container">
-            {% for item in items.dishes.all %}
-                <div class="cart-item">
-                    <div class="item">
-                        <div class="item-name">{{ item.dish.title }}</div>
-                        <img src="{{ item.dish.image.url }}">
-                        <div class="item-price">{{ item.dish.price }} рублей</div>
-                        <div class="item-recipe">{{ item.dish.recipe }}</div>
+    <div class="basket-wrapper">
+        {% if object_list %}
+        <h1 class="page-title">Оформить заказ</h1>
+        <div class="table-info">
+                <div class="name-info">Название (краткое описание)</div>    
+                <div class="amount-info">Количество</div>
+                <div class="price-info">Стоимость</div>
+                <div class="empty-info"></div>
+        </div>
+        <hr class="hr">        
+        {% for items in object_list %}
+            <div class="cart-container">
+                {% for item in items.dishes.all %}
+                    <div class="cart-item">
+                        <div class="item">
+                            <div class="item-name">{{ item.dish.title }}</div>
+                            <img src="{{ item.dish.image.url }}">
+                            <div class="item-price">{{ item.dish.price }} рублей</div>
+                            <div class="item-recipe">{{ item.dish.recipe }}</div>
+                        </div>
+                        <div class="item-amount">{{ item.amount }}</div>
+                        <div class="item-total-price"></div>
+                        <form class="form-item-delete" action="{% url 'menu:remove_from_basket' %}">
+                            {% csrf_token %}
+                            <a data-dish-id="{{ item.id }}" href="#" class="item-delete">удалить</a>
+                        </form>
                     </div>
-                    <div class="item-amount">{{ item.amount }}</div>
-                    <div class="item-total-price"></div>
-                    <form class="form-item-delete" action="{% url 'menu:remove_from_basket' %}">
-                        {% csrf_token %}
-                        <a data-dish-id="{{ item.id }}" href="#" class="item-delete">удалить</a>
-                    </form>
-                </div>
-            {% endfor %}
-            <div class="cart-total">Сумма заказа: {{ items.total }} рублей</div>
-        </div>
-    {% endfor %}  
-        <div>
-            <form class="pb-100" method="post">
-                {% csrf_token %}
-                {{ form }}
-                <input class="button" type="submit" value="Заказать"/>
-            </form>
-        </div>
-    {% else %}
-    <h1 class="page-title">Ваша корзина пуста</h1>
-    {% endif %}
+                {% endfor %}
+                <div class="cart-total">Сумма заказа: {{ items.total }} рублей</div>
+            </div>
+        {% endfor %}  
+            <div>
+                <form class="pb-100" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input class="button" type="submit" value="Заказать"/>
+                </form>
+            </div>
+        {% else %}
+        <h1 class="page-title">Ваша корзина пуста</h1>
+        {% endif %}
+    </div>
+    <div class="empty-basket"></div>
     <script>
         function itemTotalPrice () {
             var item_total_price = 0;    
@@ -222,7 +228,12 @@
                 url: url,
                 data: data,
                 success: function (data) {
-                    if(data.is_deleted) {
+                    if (data.dishes_total == 0) {
+                        $('.basket-wrapper').hide();
+                        $('.empty-basket').append(data.empty_basket).show();
+                        $('.basket_count').html(0)
+                    }
+                    else if(data.is_deleted) {
                         $this.closest('.cart-item').remove();
                         $('.cart-total').text('Сумма заказа: ' + data.basket_total + ' рублей')
                         $('.basket_count').text(data.dishes_total)
