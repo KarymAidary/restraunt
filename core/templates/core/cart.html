@@ -15,6 +15,9 @@
         .item {
             flex: 1 55%;
         }
+        .item div {
+            padding: 8px 0;
+        }
         .item-amount {
             flex: 1 15%;
             text-align: center;
@@ -37,7 +40,8 @@
             justify-content: center;
         }
         .cart-total {
-            text-align: right
+            text-align: right;
+            font-weight: 900;
         }
         form {
             display: flex;
@@ -48,19 +52,122 @@
         img {
             max-width: 40%;
         }
+        @media (max-width: 880px) {
+            .table-info {
+                display: none;
+            }
+            .hr {
+                display: none;
+            }
+        }
+        @media (min-width: 880px) {
+            .table-info {
+                display: flex;
+                flex-direction: row;
+            }
+            .name-info {
+                flex: 1 51%;
+                padding-left: 30px;
+            }
+            .amount-info {
+                flex: 1 10%;
+            }
+            .price-info {
+                flex: 1 20%;
+            }
+            .empty-info {
+                flex: 1 0%;    
+            }
+            .hr {
+                display: block;
+            }
+        }
+        @media (max-width: 700px) {
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        input[type=text] {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        input[type=tel] {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        label {
+            margin-bottom: 10px;
+            display: block;
+        }
+        .button {
+            text-align: center;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 15px;
+            letter-spacing: 4px;
+            position: relative;
+            background-color: red;
+            border: none;
+            color: #fff;
+            padding: 8px;
+            width: 200px;
+            text-align: center;
+            transition-duration: 0.4s;
+            overflow: hidden;
+            box-shadow: 0 5px 15px #193047;
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+        .button:hover {
+            background: #fff;
+            box-shadow: 0px 2px 10px 5px #1abc9c;
+            color: #000;
+        }
+
+        .button:after {
+            content: "";
+            background: #1abc9c;
+            display: block;
+            position: absolute;
+            padding-top: 300%;
+            padding-left: 350%;
+            margin-left: -20px !important;
+            margin-top: -120%;
+            opacity: 0;
+            transition: all 0.8s
+        }
+
+        .button:active:after {
+            padding: 0;
+            margin: 0;
+            opacity: 1;
+            transition: 0s
+        }
+
+        .button:focus { outline:0; }
+        .pb-100 {
+            padding-bottom: 100px;
+        }
     </style>
     {% if object_list %}
     <h1 class="page-title">Оформить заказ</h1>
+    <div class="table-info">
+            <div class="name-info">Название (краткое описание)</div>    
+            <div class="amount-info">Количество</div>
+            <div class="price-info">Стоимость</div>
+            <div class="empty-info"></div>
+    </div>
+    <hr class="hr">        
     {% for items in object_list %}
         <div class="cart-container">
             {% for item in items.dishes.all %}
-                <div class="cart-item">
-                    <div class="item">
-                    <div class="">Название (краткое описание)</div>    
-                    <div>Количество</div>
-                    <div class="item-amount"></div>
-                    <div class="block-item-total-price"></div>
-                </div>
                 <div class="cart-item">
                     <div class="item">
                         <div class="item-name">{{ item.dish.title }}</div>
@@ -81,10 +188,10 @@
     {% endfor %}  
         <hr>
         <div>
-            <form method="post">
+            <form class="pb-100" method="post">
                 {% csrf_token %}
                 {{ form }}
-                <input type="submit" value="Заказать"/>
+                <input class="button" type="submit" value="Заказать"/>
             </form>
         </div>
     {% else %}
