@@ -98,11 +98,6 @@
         #submit_btn {
             width: 50%;
             margin: 10px auto 0;
-            background-color: red;
-            color: #fff;
-            border-radius: 2em;
-            border: 2px solid #fff;
-            padding: 10px
         }
         .item-recipe {
             font-size: 12px;
@@ -112,11 +107,57 @@
             padding: 10px
         }
         .add-item-button {
-            margin: 10px;
+            margin: 10px;    
         }
         h1 {
             text-align: center;
         }
+        .button {
+            text-align: center;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 15px;
+            letter-spacing: 4px;
+            position: relative;
+            background-color: red;
+            border: none;
+            color: #fff;
+            padding: 8px;
+            width: 200px;
+            text-align: center;
+            transition-duration: 0.4s;
+            overflow: hidden;
+            box-shadow: 0 5px 15px #193047;
+            border-radius: 4px;
+            }
+
+            .button:hover {
+            background: #fff;
+            box-shadow: 0px 2px 10px 5px #1abc9c;
+            color: #000;
+            }
+
+            .button:after {
+            content: "";
+            background: #1abc9c;
+            display: block;
+            position: absolute;
+            padding-top: 300%;
+            padding-left: 350%;
+            margin-left: -20px !important;
+            margin-top: -120%;
+            opacity: 0;
+            transition: all 0.8s
+            }
+
+            .button:active:after {
+            padding: 0;
+            margin: 0;
+            opacity: 1;
+            transition: 0s
+            }
+
+            .button:focus { outline:0; }
     </style>
     <div>
         <h1>Меню</h1>
@@ -124,7 +165,11 @@
             {% for menu in items %}
                 <div class="item-container">
                     <div class="item">
+                        {% if user.is_authenticated %}
                         <a href="{% url 'menu:menu_detail' menu.pk %}"><h2>{{ menu.title }}</h2></a>
+                        {% else %}
+                        <h2>{{ menu.title }}</h2>
+                        {% endif %}
                         <img src="{{ menu.image.url }}"/>
                         <p class="item-recipe">{{ menu.recipe }}</p>
                     </div>
@@ -134,7 +179,7 @@
                         <div class="quantity">
                             <input type="number" value="1" min="1" id="amount"/>
                         </div>
-                        <input id="submit_btn" type="submit" value="Заказать"/>
+                        <input class="button" id="submit_btn" type="submit" value="Заказать"/>
                 </form>
                 </div>
             {% endfor %}
@@ -145,7 +190,7 @@
             <form action="." method="post" class="item-add-form" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}
-                <input class="add-item-button" type="submit" value="Добавить" />
+                <input class="button add-item-button" type="submit" value="Добавить" />
             </form>
         </div>
         {% endif %}

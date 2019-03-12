@@ -70,7 +70,7 @@ class Order(models.Model):
         }
         message = render_to_string('messages/message.txt', context)
         bot_token = '782909773:AAEnUd0rbfXEGQEc8hD3QFsBVdOSHH62ehA'
-        bot_chatID = '131660854'
+        bot_chatID = '551207729'
         send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + message
 
         response = requests.get(send_text)

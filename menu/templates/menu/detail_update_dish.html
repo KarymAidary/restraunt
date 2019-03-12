@@ -7,14 +7,32 @@
             width: 50%;
             margin: 0 auto;
         }
+        .update-item {
+            width: 50%;
+            margin: 0 auto;
+        }
+        .update-item-button {
+            margin: 10px 0;
+            background-color: red;
+            color: #fff;
+            border-radius: 2em;
+            border: 2px solid #fff;
+            padding: 10px;
+        }
     </style>
-    <div class="update-item"></div>
+    <div class="update-item">
+            <h1>{{ object.title }}</h1>
+            <img src="{{ object.image.url }}"/>
+            <h3>Цена:</h3>
+            <p>{{ object.price }}</p>
+            <h3>Рецепт:</h3>
+            <p>{{ object.recipe }}</p>
+    </div>
     <div class="update-block">
         <form method="post" enctype="multipart/form-data">
-            <h1>{{ object.title }}</h1>
             {% csrf_token %}
             {{ form }}
-            <input type="submit" value="Редактировать"/>
+            <input class="update-item-button" type="submit" value="Редактировать"/>
         </form>
     </div>
 {% endblock %}

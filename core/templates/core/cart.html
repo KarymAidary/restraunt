@@ -45,6 +45,9 @@
             margin: 0 auto;
             width: 50%;
         }
+        img {
+            max-width: 40%;
+        }
     </style>
     {% if object_list %}
     <h1 class="page-title">Оформить заказ</h1>
@@ -53,8 +56,15 @@
             {% for item in items.dishes.all %}
                 <div class="cart-item">
                     <div class="item">
+                    <div class="">Название (краткое описание)</div>    
+                    <div>Количество</div>
+                    <div class="item-amount"></div>
+                    <div class="block-item-total-price"></div>
+                </div>
+                <div class="cart-item">
+                    <div class="item">
                         <div class="item-name">{{ item.dish.title }}</div>
-                        <!-- <img src="{{ item.dish.image.url }}"> -->
+                        <img src="{{ item.dish.image.url }}">
                         <div class="item-price">{{ item.dish.price }} рублей</div>
                         <div class="item-recipe">{{ item.dish.recipe }}</div>
                     </div>
