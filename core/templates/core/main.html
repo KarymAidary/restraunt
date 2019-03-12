@@ -1,0 +1,211 @@
+{% extends 'core/base.html' %}
+{% block content %}
+    <style>
+        .list-item {
+            display: flex;
+            flex-flow: row wrap;
+            padding: 0 30px;
+        }
+
+        .item-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 33.3333333%;
+            text-align: center;
+            justify-content: space-between;
+        }
+        img {
+            max-width: 80%;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .quantity {
+            position: relative;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button
+        {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number]
+        {
+            -moz-appearance: textfield;
+        }
+
+        .quantity input {
+            width: 45px;
+            height: 42px;
+            line-height: 1.65;
+            float: left;
+            display: block;
+            padding: 0;
+            margin: 0;
+            padding-left: 20px;
+            border: 1px solid #eee;
+        }
+
+        .quantity input:focus {
+            outline: 0;
+        }
+
+        .quantity-nav {
+            float: left;
+            position: relative;
+            height: 42px;
+        }
+
+        .quantity-button {
+            position: relative;
+            cursor: pointer;
+            border-left: 1px solid #eee;
+            width: 20px;
+            text-align: center;
+            color: #333;
+            font-size: 13px;
+            font-family: "Trebuchet MS", Helvetica, sans-serif !important;
+            line-height: 1.7;
+            -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .quantity-button.quantity-up {
+            position: absolute;
+            height: 50%;
+            top: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quantity-button.quantity-down {
+            position: absolute;
+            bottom: -1px;
+            height: 50%;
+        }
+        .add_to_cart {
+            width: 100%;
+        }
+        #submit_btn {
+            width: 50%;
+            margin: 10px auto 0;
+            background-color: red;
+            color: #fff;
+            border-radius: 2em;
+            border: 2px solid #fff;
+            padding: 10px
+        }
+        .item-recipe {
+            font-size: 12px;
+            text-align: start;
+        }
+        .item-add-form label {
+            padding: 10px
+        }
+        .add-item-button {
+            margin: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+    <div>
+        <h1>Меню</h1>
+        <div class="list-item">
+            {% for menu in items %}
+                <div class="item-container">
+                    <div class="item">
+                        <a href="{% url 'menu:menu_detail' menu.pk %}"><h2>{{ menu.title }}</h2></a>
+                        <img src="{{ menu.image.url }}"/>
+                        <p class="item-recipe">{{ menu.recipe }}</p>
+                    </div>
+                    <form method="post" data-product-id="{{ menu.id }}" id="add-to-cart" class="add_to_cart"
+                          action="{% url 'menu:add_to_basket' %}">
+                        {% csrf_token %}
+                        <div class="quantity">
+                            <input type="number" value="1" min="1" id="amount"/>
+                        </div>
+                        <input id="submit_btn" type="submit" value="Заказать"/>
+                </form>
+                </div>
+            {% endfor %}
+        </div>
+        {% if user.is_authenticated %}
+        <hr>
+        <div class="item-add">
+            <form action="." method="post" class="item-add-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form }}
+                <input class="add-item-button" type="submit" value="Добавить" />
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        $('.add_to_cart').on('submit', function (e) {
+            e.preventDefault();
+            var data = {};
+            var csrf_token = $('#add-to-cart [name="csrfmiddlewaretoken"]').val();
+            console.log(csrf_token)
+            var url = $(this).attr('action');
+            var dish_id = $(this).data('productId');
+            console.log(dish_id)
+            var dish_amount = $(this).find("#amount").val();
+            console.log(dish_amount)
+            data.dish_id = dish_id;
+            data.dish_amount = dish_amount;
+            data['csrfmiddlewaretoken'] = csrf_token;
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function (data) {
+                    if (data.dish_total || data.dish_total === 0) {
+                        $('.basket_count').text(data.dish_total)
+                    }
+                }
+            })
+        })
+
+        jQuery('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantity input');
+        jQuery('.quantity').each(function() {
+        var spinner = jQuery(this),
+            input = spinner.find('input[type="number"]'),
+            btnUp = spinner.find('.quantity-up'),
+            btnDown = spinner.find('.quantity-down'),
+            min = input.attr('min'),
+            max = input.attr('max');
+
+        btnUp.click(function() {
+            var oldValue = parseFloat(input.val());
+            if (oldValue >= max) {
+            var newVal = oldValue;
+            } else {
+            var newVal = oldValue + 1;
+            }
+            spinner.find("input").val(newVal);
+            spinner.find("input").trigger("change");
+        });
+
+        btnDown.click(function() {
+            var oldValue = parseFloat(input.val());
+            if (oldValue <= min) {
+            var newVal = oldValue;
+            } else {
+            var newVal = oldValue - 1;
+            }
+            spinner.find("input").val(newVal);
+            spinner.find("input").trigger("change");
+        });
+        });
+    </script>
+{% endblock %}

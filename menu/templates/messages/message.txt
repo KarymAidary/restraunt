@@ -1,0 +1,12 @@
+Имя: {{name }}
+Телефон: {{ phone_number }}
+Дата доставки: {{ delivery_date }}
+Адрес доставки: {{ location }}
+Дата заказа: {{ date_ordered }}
+------------------------------------------------------------
+Заказ № {{ order_id }}: 
+{% for item in items %}
+{{ forloop.counter }}.
+Название блюда: {{ item.dish.title }}
+Количество: {{ item.amount }}
+{% endfor %}

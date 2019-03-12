@@ -1,0 +1,118 @@
+{% extends 'core/base.html' %}
+{% block content %}
+    <style>
+        .page-title {
+            text-align: center
+        }
+        .cart-container {
+            padding: 25px;
+        }
+        .cart-item {
+            display: flex;
+            flex-direction: row;
+            padding: 20px 0;
+        }
+        .item {
+            flex: 1 55%;
+        }
+        .item-amount {
+            flex: 1 15%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .item-total-price {
+            flex: 1 15%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .form-item-delete {
+            flex: 1 15%;
+            text-align: center;    
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .cart-total {
+            text-align: right
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            width: 50%;
+        }
+    </style>
+    {% if object_list %}
+    <h1 class="page-title">Оформить заказ</h1>
+    {% for items in object_list %}
+        <div class="cart-container">
+            {% for item in items.dishes.all %}
+                <div class="cart-item">
+                    <div class="item">
+                        <div class="item-name">{{ item.dish.title }}</div>
+                        <!-- <img src="{{ item.dish.image.url }}"> -->
+                        <div class="item-price">{{ item.dish.price }} рублей</div>
+                        <div class="item-recipe">{{ item.dish.recipe }}</div>
+                    </div>
+                    <div class="item-amount">{{ item.amount }}</div>
+                    <div class="item-total-price"></div>
+                    <form class="form-item-delete" action="{% url 'menu:remove_from_basket' %}">
+                        {% csrf_token %}
+                        <a data-dish-id="{{ item.id }}" href="#" class="item-delete">удалить</a>
+                    </form>
+                </div>
+            {% endfor %}
+            <div class="cart-total">Сумма заказа: {{ items.total }} рублей</div>
+        </div>
+    {% endfor %}  
+        <hr>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Заказать"/>
+            </form>
+        </div>
+    {% else %}
+    <h1 class="page-title">Ваша корзина пуста</h1>
+    {% endif %}
+    <script>
+        function itemTotalPrice () {
+            var item_total_price = 0;    
+            $('.cart-item').each(function (){
+                var price = parseFloat($(this).find('.item-price').text());
+                var amount = parseFloat($(this).find('.item-amount').text());
+                item_total_price = price * amount;
+                $(this).find('.item-total-price').text(item_total_price + ' рублей')
+            })
+        }
+        itemTotalPrice()
+        $('.item-delete').on('click', function (e) {
+            e.preventDefault();
+            var $this = $(this)
+            var data = {};
+            var csrf_token = $('.form-item-delete [name="csrfmiddlewaretoken"]').val();
+            var url = $('.form-item-delete').attr('action');
+            var remove_item_id = $(this).data('dishId');
+            data.remove_item_id = remove_item_id;
+            data['csrfmiddlewaretoken'] = csrf_token;
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function (data) {
+                    if(data.is_deleted) {
+                        $this.closest('.cart-item').remove();
+                        $('.cart-total').text('Сумма заказа: ' + data.basket_total + ' рублей')
+                        $('.basket_count').text(data.dishes_total)
+                    }
+                
+                }
+            })
+        })
+    </script>   
+{% endblock %}

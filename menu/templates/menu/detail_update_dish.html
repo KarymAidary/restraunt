@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% block content %}
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            margin: 0 auto;
+        }
+    </style>
+    <div class="update-item"></div>
+    <div class="update-block">
+        <form method="post" enctype="multipart/form-data">
+            <h1>{{ object.title }}</h1>
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Редактировать"/>
+        </form>
+    </div>
+{% endblock %}

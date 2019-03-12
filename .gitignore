@@ -1,0 +1,15 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+/static/
+*.idea
+venv
+media
+.cache
+db.sqlite3
+._*
+*.pot
+*.pyc
+.env
+*.vscode
+/log/
