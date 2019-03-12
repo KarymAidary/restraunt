@@ -42,6 +42,7 @@
         .cart-total {
             text-align: right;
             font-weight: 900;
+            border-bottom: 3px solid red;
         }
         form {
             display: flex;
@@ -186,7 +187,6 @@
             <div class="cart-total">Сумма заказа: {{ items.total }} рублей</div>
         </div>
     {% endfor %}  
-        <hr>
         <div>
             <form class="pb-100" method="post">
                 {% csrf_token %}

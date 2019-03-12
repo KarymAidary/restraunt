@@ -52,7 +52,7 @@ class Order(models.Model):
     name = models.CharField(verbose_name='Имя', max_length=200, null=True, default=None)
     phone_number = PhoneNumberField(verbose_name='Мобильный телефон', default=None)
     delivery_date = models.DateTimeField(verbose_name="Время (дата) доставки", default=timezone.now)
-    location = models.CharField(verbose_name="Адресс Доставки (киоск)", max_length=225, null=True, default=None)
+    location = models.CharField(verbose_name="Адрес Доставки (киоск)", max_length=225, null=True, default=None)
     date_ordered = models.DateTimeField(auto_now=True)
     basket = models.OneToOneField('Basket', on_delete=models.CASCADE, related_name='basket', default=None)
     sent_by_bot = models.BooleanField(default=False)
