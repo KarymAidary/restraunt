@@ -36,7 +36,7 @@ else:
     SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 if HEROKU:
-    ALLOWED_HOSTS = ['hairbrush.herokuapp.com', ]
+    ALLOWED_HOSTS = ['sm-restaurant.herokuapp.com', ]
 else:
     ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
 
